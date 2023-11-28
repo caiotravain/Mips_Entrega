@@ -30,45 +30,68 @@ end entity;
 
 architecture arquitetura of Aula2 is
 		  signal CLK : std_logic;
-		  signal Endereco_rom : std_logic_vector(larguraEnderecos-1 downto 0);
 		  signal Saida_rom : std_logic_vector(larguraEnderecos-1 downto 0);
+			signal entra_soma_constante : std_logic_vector(larguraEnderecos-1 downto 0);
+                  signal saida_soma_constante_EX_MEM : std_logic_vector(larguraEnderecos-1 downto 0);
 		  signal Saida_soma_constante : std_logic_vector(larguraEnderecos-1 downto 0);
 		  signal Endereco_reg0 : std_logic_vector(4 downto 0);
 		  signal Endereco_reg1 : std_logic_vector(4 downto 0);
 		  signal Endereco_reg2 : std_logic_vector(4 downto 0);
+		  signal rt : std_logic_vector(4 downto 0);
+		  signal rd : std_logic_vector(4 downto 0);
 		  signal saida_mux_banco : std_logic_vector(4 downto 0);
+                  signal saida_mux_banco_entrada: std_logic_vector(4 downto 0);
+                  signal saida_mux_banco_final: std_logic_vector(4 downto 0);
+
+
 		  signal saida_mux_ram: std_logic_vector(larguraDados-1 downto 0);
 		  signal dado_saida_reg0 : std_logic_vector(larguraDados-1 downto 0);
+                  signal dado_saida_reg1_EX_MEM : std_logic_vector(larguraDados-1 downto 0);
 		  signal dado_saida_reg1 : std_logic_vector(larguraDados-1 downto 0);
 		  signal saida_mux_B : std_logic_vector(larguraDados-1 downto 0);
 		  signal saida_ula :  std_logic_vector(larguraDados-1 downto 0);
+		  		  signal saida_ula_entrada :  std_logic_vector(larguraDados-1 downto 0);
+
 		  signal saida_ram :  std_logic_vector(larguraDados-1 downto 0);
 		  signal extende_signal :  std_logic_vector(larguraDados-1 downto 0);
 		  signal imediato :std_logic_vector(15 downto 0);
 		  signal saida_soma_beq :  std_logic_vector(larguraDados-1 downto 0);
 		  signal Saida_mux_beq :  std_logic_vector(larguraDados-1 downto 0);
-		  signal extende_signal_beq:  std_logic_vector(larguraDados-1 downto 0);
 		  signal imediato_jump :  std_logic_vector(larguraDados-1 downto 0);
-		  signal saida_mux_proxpc :  std_logic_vector(larguraDados-1 downto 0);
+		  signal Endereco_rom : std_logic_vector(larguraEnderecos-1 downto 0);
 		  
 		  signal saida_mux_final :  std_logic_vector(larguraDados-1 downto 0);
-	     signal saida_decoder:  std_logic_vector(14 downto 0);
+	          signal saida_decoder:  std_logic_vector(14 downto 0);
 		  signal opcode:  std_logic_vector(5 downto 0);
 		  
-		  signal ULA_ctrl :  std_logic_vector(3 downto 0);
 
 		  signal signal_beq : std_logic;
 		  signal saida_zULA : std_logic;
 		  
 		  signal BEQ : std_logic;
-		  signal RD : std_logic;
+		  signal RE : std_logic;
 		  signal WR : std_logic;
 		  signal habilita : std_logic;
-		  
+		  signal habilita_final : std_logic;
+		  signal out_habilita : std_logic;
 		  signal SEL_ula_mem : std_logic;
+                  signal SEL_ula_mem_entrada : std_logic; 
 		  signal SEL_rt_imed : std_logic;
 		  signal SEL_rt_rd : std_logic;
 		  signal SEL_beq_jmp : std_logic;
+                  signal SEL_beq_jmp_entrada : std_logic; 
+						
+						
+			signal in_if_id:  std_logic_vector(63 downto 0);
+			signal out_if_id:  std_logic_vector(63 downto 0);
+                        signal in_id_ex:  std_logic_vector(152 downto 0);
+                        signal out_id_ex:  std_logic_vector(152 downto 0);
+
+                        signal in_ex_mem:  std_logic_vector(139 downto 0);
+                        signal out_ex_mem:  std_logic_vector(139 downto 0);
+
+                        signal in_mem_wb:  std_logic_vector(70 downto 0);
+                        signal out_mem_wb:  std_logic_vector(70 downto 0);
 
 
 begin
@@ -84,95 +107,205 @@ detectorSub0: work.edgeDetector(bordaSubida)
 end generate;
 
 
-ROM_MIPS : entity work.ROMMIPS 
-          port map (Endereco => Endereco_rom, Dado => Saida_rom);
-			 
-			 
--- O port map completo do Program Counter.
-PC : entity work.pc_counter   generic map (larguraDados => larguraEnderecos)
-      port map (DIN => saida_mux_proxpc, DOUT => Endereco_rom, ENABLE => '1', CLK => CLK, RST => '0');			 
-			 
-
-somaconstante :  entity work.somaConstante  generic map (larguraDados => larguraEnderecos, constante => 4)
-        port map( entrada => Endereco_rom, saida => Saida_soma_constante);
-		  
-		  
-Mux_banco_reg:  entity work.muxGenerico2x1 generic map (larguraDados => 5)
-        port map( entradaA_MUX => Endereco_reg1,
-                 entradaB_MUX =>  Endereco_reg2,
-                 seletor_MUX => SEL_rt_rd ,
-                 saida_MUX => saida_mux_banco);		  
-
-		  
-Mux_saida_ram:  entity work.muxGenerico2x1 generic map (larguraDados => 32)
-        port map( entradaA_MUX => saida_ula,
-                 entradaB_MUX =>  saida_ram,
-                 seletor_MUX =>SEL_ula_mem ,
-                 saida_MUX => saida_mux_ram);						  
 					  
-					  
-					  
-BANCO_REG :  entity work.bancoReg   generic map (larguraDados => larguraDados, larguraEndBancoRegs => 5)
-          port map ( clk => CLK,
-              enderecoA => Endereco_reg0,
-              enderecoB => Endereco_reg1,
-              enderecoC => saida_mux_banco,
-              dadoEscritaC => saida_mux_ram,
-              escreveC => Habilita,
-              saidaA => dado_saida_reg0,
-              saidaB  => dado_saida_reg1);
-
-Mux_entrada_b:  entity work.muxGenerico2x1 generic map (larguraDados => 32)
-        port map( entradaA_MUX => dado_saida_reg1,
-                 entradaB_MUX =>  extende_signal,
-                 seletor_MUX =>  SEL_rt_imed,
-                 saida_MUX => saida_mux_B);	
+		  
+Parte_if:  entity work.parte_IF generic map (larguraDados => 32)
+        port map( 
+                 Saida_mux_beq =>  saida_mux_beq,
+                 imediato_jump => imediato_jump ,
+		 SEL_beq_jmp => SEL_beq_jmp ,
+		 Saida_soma_constante => entra_soma_constante ,
+		 CLK => CLK ,
+                 Saida_rom => Saida_rom,
+		 Endereco_rom => Endereco_rom
+		);	
+	
+	
+in_if_id <= saida_rom & entra_soma_constante ;
 
 
+
+
+reg_if_id : entity work.registradorGenerico   generic map (larguraDados => 64)
+          port map (DIN => in_if_id, DOUT => out_if_id, ENABLE => '1', CLK => CLK, RST => '0');		
+		  
+
+	
+
+	
+		
+Parte_ID: entity work.Parte_ID
+        generic map (
+            larguraDados => 32 -- Specify your generic values here if needed
+        )
+        port map (
+            -- Map your signals to the corresponding ports
+            Saida_rom => out_if_id(63 downto 32),
+            entra_soma_constante => out_if_id(31 downto 0),
+            saida_mux_banco => saida_mux_banco_final,
+            saida_mux_ram => saida_mux_ram,
+            CLK => CLK,
+
+
+	    imediato => imediato ,
+            Endereco_reg0 => Endereco_reg0,
+            Endereco_reg1 => Endereco_reg1,
+            Endereco_reg2 => Endereco_reg2,
+            opcode => opcode,
+            habilita => habilita_final,
+            saida_a => dado_saida_reg0,
+            saida_b => dado_saida_reg1,
+            extende_signal => extende_signal,
+            rt => rt,
+            rd => rd,
+            saida_decoder => saida_decoder,
+	    imediato_jump =>imediato_jump ,
+	    saida_soma_constante =>Saida_soma_constante
+				
+        );
+
+
+in_id_ex <=  extende_signal & dado_saida_reg0 & dado_saida_reg1 & rt & rd &    
+        saida_decoder  & Saida_soma_constante;
+
+
+reg_id_ex : entity work.registradorGenerico   generic map (larguraDados => 153)
+        port map (DIN => in_id_ex, DOUT => out_id_ex, ENABLE => '1', CLK => CLK, RST => '0');		
+        
+
+
+
+
+-- parte 3					
+
+parte_EX: entity work.parte_EX
+        generic map (
+            larguraDados => 32 -- Specify your generic values here if needed
+        )
+        port map (
+            -- Map your signals to the corresponding ports
+        dado_saida_reg0 => out_id_ex( 120 downto 89),
+        dado_saida_reg1 => out_id_ex(88 downto 57),
+        extende_signal => out_id_ex(152 downto 121),
+        saida_decoder => out_id_ex(46 downto 32),
+        saida_soma_constante => out_id_ex(31 downto 0),
+        rd => out_id_ex(51 downto 47),
+        rt => out_id_ex(56 downto 52),
+
+        
+        saida_zULA => saida_zULA,
+        saida_soma_beq => saida_soma_beq,
+        saida_mux_banco => saida_mux_banco_entrada,
+        saida_ula => saida_ula_entrada,
+        wr => WR,
+        re => RE,
+        habilita => habilita,
+        sel_ula_mem => SEL_ula_mem_entrada,
+        sel_beq_jmp => SEL_beq_jmp_entrada,
+        saida_soma_constante_EX_MEM => saida_soma_constante_EX_MEM,
+        dado_saida_reg1_EX_MEM => dado_saida_reg1_EX_MEM,
+        beq => BEQ
+
+        );
+
+in_ex_mem <= saida_ula_entrada & saida_mux_banco_entrada & saida_soma_beq &
+                 saida_soma_constante_EX_MEM & dado_saida_reg1_EX_MEM &
+                  SEL_ula_mem_entrada & SEL_beq_jmp_entrada & BEQ & WR 
+                  & RE & habilita & saida_zULA;
+
+reg_ex_mem : entity work.registradorGenerico   generic map (larguraDados => 140)
+        port map (DIN => in_ex_mem, DOUT => out_ex_mem, ENABLE => '1', CLK => CLK, RST => '0');
 				  
-ULA : entity work.ULASomaSub  generic map(larguraDados => larguraDados)
-          port map (entradaA => dado_saida_reg0, entradaB => saida_mux_B , saida => saida_ula, seletor => ULA_ctrl(1 downto 0), saida_z=> saida_zULA, inverte_B=>ULA_ctrl(2),inverte_A=>ULA_ctrl(3));		
 
-			 
-RAM : entity work.RAMMIPS 
-          port map (Endereco => saida_ula, we => WR, re => RD, habilita  => '1', dado_in => dado_saida_reg1, dado_out => saida_ram, clk => CLK);
+        
 
-			 
-Soma_beq :  entity work.somadorGenerico  generic map (larguraDados => 32)
-        port map( entradaA => Saida_soma_constante, entradaB =>  extende_signal_beq, saida => saida_soma_beq);			 
-			 
-			 
-			 
-Mux_beq :  entity work.muxGenerico2x1 generic map (larguraDados => 32)
-        port map( entradaA_MUX => Saida_soma_constante,
-                 entradaB_MUX =>  saida_soma_beq,
-                 seletor_MUX => signal_beq,
-                 saida_MUX => Saida_mux_beq);
 
-mux_proxpc :  entity work.muxGenerico2x1 generic map (larguraDados => 32)
-        port map( entradaA_MUX => Saida_mux_beq,
-                 entradaB_MUX =>  imediato_jump,
-                 seletor_MUX => SEL_beq_jmp,
-                 saida_MUX => saida_mux_proxpc);
+
+
+parte_MEM: entity work.parte_MEM
+generic map (
+    larguraDados => 32 -- Specify your generic values here if needed
+)	
+port map (
+        -- Map your signals to the corresponding ports
+        clk => CLK,
+        Saida_soma_constante => out_ex_mem(70 downto 39),
+        saida_soma_beq => out_ex_mem(102 downto 71),
+        saida_mux_banco_entrada => out_ex_mem(107 downto 103),
+        sel_beq_jmp => out_ex_mem(5),
+        sel_ula_mem => out_ex_mem(6),
+        signal_beq => signal_beq,
+        saida_ula => out_ex_mem(139 downto 108),
+        saida_zULA => out_ex_mem(0),
+        dado_saida_reg1 => out_ex_mem(38 downto 7),
+        WR => out_ex_mem(3),
+        RE => out_ex_mem(2),
+        BEQ => out_ex_mem(4),
+        habilita => out_ex_mem(1),
+
+
+        saida_mux_beq => saida_mux_beq,
+        saida_mux_banco => saida_mux_banco,
+        out_habilita => out_habilita,
+        sel_beq_jmp_saida => SEL_beq_jmp,
+        sel_ula_mem_saida => SEL_ula_mem,
+        saida_ram => saida_ram,
+        saida_ula_saida => saida_ula
+);
+         
+
+--parte 5
+
+in_mem_wb <= saida_mux_banco  & saida_ram &
+        out_habilita & SEL_ula_mem & saida_ula;
+
+reg_mem_wb : entity work.registradorGenerico   generic map (larguraDados => 71)
+        port map (DIN => in_mem_wb, DOUT => out_mem_wb, ENABLE => '1', CLK => CLK, RST => '0');
+
+
+
+parte_WB: entity work.parte_WB
+generic map (
+    larguraDados => 32 -- Specify your generic values here if needed
+)
+port map (
+        -- Map your signals to the corresponding ports
+       clk => CLK,
+        saida_ula =>out_mem_wb(31 downto 0),
+        saida_mux_banco => out_mem_wb(70 downto 66),
+        saida_ram => out_mem_wb(65 downto 34),
+        SEL_ula_mem => out_mem_wb(32),
+        habilita => out_mem_wb(33),
+
+        saida_mux_ram => saida_mux_ram,
+        saida_mux_banco_final => saida_mux_banco_final,
+        habilita_final => habilita_final
+);
+	
+                 
+--- Mux_saida_ram:  entity work.muxGenerico2x1 generic map (larguraDados => 32)
+--         port map( entradaA_MUX => saida_ula,
+--                  entradaB_MUX =>  saida_ram,
+--                  seletor_MUX =>SEL_ula_mem ,
+--                  saida_MUX => saida_mux_ram);	
+                 
+
+
+
+--- end of instanciation
+--- displaing the results
+					  
+mux_final :  entity work.muxGenerico4x1 generic map (larguraDados => 32)
+        port map( entradaA_MUX => Endereco_rom,
+                 entradaB_MUX =>  out_id_ex(31 downto 0),
+					  entradaC_MUX =>  saida_ula_entrada,
+					  entradaD_MUX =>  saida_mux_ram,
+                 seletor_MUX => SW(1 downto 0),
+                 saida_MUX => saida_mux_final);
 					  
 					  
-decoder :  entity work.decoderGeneric
-        port map( entrada => opcode,
-                 saida => saida_decoder);
 					  
 	
-ula_control: entity work.ula_control
-        port map( opcode => saida_decoder(14 downto 9),
-						funct => imediato(5 downto 0),
-						tipo_r => saida_decoder(4),
-                 ULA_ctrl => ULA_ctrl);
-					  
-					  
-mux_final :  entity work.muxGenerico2x1 generic map (larguraDados => 32)
-        port map( entradaA_MUX => Endereco_rom,
-                 entradaB_MUX =>  saida_ula,
-                 seletor_MUX => SW(0),
-                 saida_MUX => saida_mux_final);
 
 display :  entity work.display
         port map( entrada => saida_mux_final,
@@ -188,35 +321,17 @@ display :  entity work.display
 					  
 
 
-		
-WR <= saida_decoder(0)	;				  
-RD <= saida_decoder(1)	;
-BEQ <= saida_decoder(2)	;
-SEL_ula_mem <= saida_decoder(3)	;
 
-SEL_rt_imed <= saida_decoder(5)	;					  
-Habilita <= saida_decoder(6)		;				  
-SEL_rt_rd  <= saida_decoder(7)	;
-SEL_beq_jmp  <= saida_decoder(8)	;					  
-					  
-					  
+LEDR(8) <= 		habilita_final;
+			  
+LEDR(9) <= 		saida_zULA;
 
-signal_beq <= BEQ and saida_zULA;
-imediato_jump <= Saida_soma_constante(31 downto 28) & Saida_rom(25 downto 0) & "00";
 			 
-Endereco_reg0 <= Saida_rom(25 downto 21);
-Endereco_reg1 <= Saida_rom(20 downto 16);
-Endereco_reg2 <= Saida_rom(15 downto 11);
 
-opcode <= Saida_rom(31 downto 26);
-		
-extende_signal <= imediato(15) & imediato(15) & imediato(15) & imediato(15) &
-					imediato(15) &imediato(15) &imediato(15) &imediato(15) &imediato(15)
-					&imediato(15) &imediato(15) &imediato(15) &imediato(15) &imediato(15) 
-					&imediato(15) &imediato(15)&imediato(15 downto 0);
-					
-extende_signal_beq <= extende_signal(29 downto 0) & "00";
-imediato <= Saida_rom(15 downto 0)	;	
+
+
+				
+	
 	
 
 	
