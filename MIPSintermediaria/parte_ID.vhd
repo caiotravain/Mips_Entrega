@@ -17,14 +17,16 @@ entity parte_ID is
         saida_a : out std_logic_vector(larguraDados-1 downto 0);
 		saida_b : out std_logic_vector(larguraDados-1 downto 0);
 		extende_signal : out std_logic_vector(larguraDados-1 downto 0);
+		lui : out std_logic_vector(larguraDados-1 downto 0);
 		rt : out std_logic_vector(4 downto 0);
 		rd : out std_logic_vector(4 downto 0);
-		saida_decoder: out std_logic_vector(14 downto 0);
+		saida_decoder: out std_logic_vector(19 downto 0);
 		imediato : out std_logic_vector(15 downto 0);
 		Saida_soma_constante : out std_logic_vector(larguraDados-1 downto 0);
 		imediato_jump : out std_logic_vector(larguraDados-1 downto 0);
 		Endereco_reg0 : out std_logic_vector(4 downto 0);
 		Endereco_reg1 : out std_logic_vector(4 downto 0);
+		JR : out std_logic;
 		Endereco_reg2 : out std_logic_vector(4 downto 0)
 
         );
@@ -68,12 +70,17 @@ BANCO_REG :  entity work.bancoReg   generic map (larguraDados => larguraDados, l
 extende_signal <= imediato(15) & imediato(15) & imediato(15) & imediato(15) &
 					imediato(15) &imediato(15) &imediato(15) &imediato(15) &imediato(15)
 					&imediato(15) &imediato(15) &imediato(15) &imediato(15) &imediato(15) 
-					&imediato(15) &imediato(15)&imediato(15 downto 0);
+					&imediato(15) &imediato(15)&imediato(15 downto 0) 	when (saida_decoder(9) = '0') else
+					"0000000000000000" & imediato;
+					
+					
+LUI <= imediato & "0000000000000000";
 					
 					
 					  
 decoder :  entity work.decoderGeneric
         port map( entrada => Saida_rom(31 downto 26),
+						nop => Saida_rom,
                  saida => saida_decoder);
 
 	
@@ -82,6 +89,6 @@ rd <= Endereco_reg2_sig;
 
 
 Saida_soma_constante <= entra_soma_constante;
-
+JR <= saida_decoder(19);
 
 end architecture;

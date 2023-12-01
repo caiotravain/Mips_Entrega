@@ -1,0 +1,65 @@
+-- Copyright (C) 2017  Intel Corporation. All rights reserved.
+-- Your use of Intel Corporation's design tools, logic functions
+-- and other software and tools, and its AMPP partner logic
+-- functions, and any output files from any of the foregoing
+-- (including device programming or simulation files), and any
+-- associated documentation or information are expressly subject
+-- to the terms and conditions of the Intel Program License
+-- Subscription Agreement, the Intel Quartus Prime License Agreement,
+-- the Intel FPGA IP License Agreement, or other applicable license
+-- agreement, including, without limitation, that your use is for
+-- the sole purpose of programming logic devices manufactured by
+-- Intel and sold by Intel or its authorized distributors.  Please
+-- refer to the applicable agreement for further details.
+
+WIDTH=32;
+DEPTH=64;
+ADDRESS_RADIX=DEC;
+DATA_RADIX=HEX;
+
+CONTENT BEGIN
+0   :  3c090000;      --lui $t1, 0x0000;
+1   :  3c0baaaa;      --lui $t3, 0xAAAA;
+2   :  3c0f1000;      --lui $t7, 0x1000;
+3   :  3529000a;      --ori $t1, $t1, 0x0A;        # $t1 (#9) := 0x0A
+4   :  356baaaa;      --ori $t3, $t3, 0xAAAA;      # $t3 (#11) := 0xAAAAAAAA
+5   :  35ef0000;      --ori $t7, $t7, 0x0000;
+6   :  212a0001;      --addi $t2, $t1, 0x01;       # $t2 (#10) := 0x0B
+7   :  01606025;      --or $t4, $t3, $0;           # $t4 (#12) := 0xAAAAAAAA
+8   :  316dffff;      --andi $t5, $t3, 0xFFFF;     # $t5 (#13) := 0x0000AAAA
+9   :  01497022;      --sub $t6, $t2, $t1;         # $t6 (#14) := 0x01
+10  :  ac090008;      --sw $t1, 8($zero);          # M[8) = 0x0A
+11  :  8c080008;      --lw $t0, 8($zero);
+12  :  010a7824;      --and $t7, $t0, $t2;         # Hazard Load Use
+13  :  290fffff;      --slti $t7, $t0, 0xFFFF;
+14  :  012a402a;      --slt $t0, $t1, $t2;
+--destinoBEQ:
+15  :  012e4820;      --add $t1, $t1, $t6;         # t0 = t2, segunda vez: t0 != t2
+16  :  00000000;      --nop;
+17  :  00000000;      --nop;
+18  :  112afffc;      --beq $t1, $t2, destinoBEQ;  # Desvia na primeira e nao desvia depois
+19  :  00000000;      --nop;
+20  :  00000000;      --nop;
+21  :  00000000;      --nop;
+22  :  0c000020;      --jal subrotina;
+23  :  00000000;      --nop;
+24  :  00000000;      --nop;
+25  :  00000000;      --nop;
+26  :  00000000;      --nop;
+27  :  150d0008;      --bne $t0, $t5, fim
+28  :  00000000;      --nop;
+29  :  00000000;      --nop;
+30  :  00000000;      --nop;
+31  :  00000000;      --nop;
+--subrotina:
+32  :  00000000;      --nop;
+33  :  03e00008;      --jr $ra;
+34  :  00000000;      --nop;
+35  :  00000000;      --nop;
+--fim:
+36  :  00000000;      --nop;
+37  :  08000024;      --j fim;
+38  :  00000000;      --nop;
+39  :  00000000;      --nop;
+[40..63]  :  00000000; --nop;
+END;
