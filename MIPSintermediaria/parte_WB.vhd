@@ -31,7 +31,7 @@ begin
     saida_mux_banco_final <= saida_mux_banco;
     habilita_final <= habilita;
 				  
-	
+	-- MUX added to type A
     Mux_saida_ram:  entity work.muxGenerico4x1 generic map (larguraDados => 32)
         port map( entradaA_MUX => saida_ula,
                  entradaB_MUX =>  saida_ram,
