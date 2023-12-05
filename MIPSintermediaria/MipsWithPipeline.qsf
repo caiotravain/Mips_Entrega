@@ -264,7 +264,6 @@ set_global_assignment -name VHDL_FILE registradorGenerico.vhd
 set_global_assignment -name VHDL_FILE conversorHex7Seg.vhd
 set_global_assignment -name VHDL_FILE display.vhd
 set_global_assignment -name MIF_FILE ROMcontent.mif
-set_global_assignment -name VHDL_FILE Aula2.vhd
 set_global_assignment -name VHDL_FILE ULASomaSub.vhd
 set_global_assignment -name VHDL_FILE edgeDetector.vhd
 set_global_assignment -name VHDL_FILE somaConstante.vhd
