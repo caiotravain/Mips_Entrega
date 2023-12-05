@@ -1,0 +1,42 @@
+Quartus Prime Archive log --	C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/MipsWithPipeline - Andre e Caio.qarlog
+
+Archive:	C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/MipsWithPipeline - Andre e Caio.qar
+Date:		Tue Dec 05 11:39:37 2023
+Quartus Prime		20.1.0 Build 711 06/05/2020 SJ Lite Edition
+
+	=========== Files Selected: ===========
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/MipsWithPipeline.qpf
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/MipsWithPipeline.qsf
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/RAMMIPS.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ROMMIPS.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ROMcontent.mif
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ULASomaSub.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/Waveform.vwf
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/bancoReg.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/conversorHex7Seg.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/decoderGeneric.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/display.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/edgeDetector.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/full_adder.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/funct_dec.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/muxGenerico2x1.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/muxGenerico4x1.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/op_code_dec.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/parte_EX.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/parte_ID.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/parte_IF.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/parte_MEM.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/parte_WB.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/pc_counter.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/registradorGenerico.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/somaConstante.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/somadorGenerico.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/toplevel.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ula_1bit.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ula_1bit_31.vhd
+C:/Users/felip/www/Mips_Entrega/MIPSintermediaria/ula_control.vhd
+d:/intelfpga_lite/20.1/quartus/bin64/assignment_defaults.qdf
+	======= Total: 31 files to archive =======
+
+	================ Status: ===============
+All files archived successfully.
